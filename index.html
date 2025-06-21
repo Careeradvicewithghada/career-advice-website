@@ -802,7 +802,7 @@
             <h2 class="section-title" style="color: white;">احجز جلستك المجانية الآن</h2>
             <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">ابدأ أول خطوة نحو مستقبلك المهني مع جلسة تقييم مجانية</p>
             
-            <form class="contact-form" id="contactForm">
+            <form class="contact-form" action="https://formspree.io/f/xanyqgdj" method="POST" id="contactForm">
                 <div class="form-grid">
                     <input type="text" class="form-input" placeholder="الاسم الكامل" required name="name">
                     <input type="email" class="form-input" placeholder="البريد الإلكتروني" required name="email">
@@ -816,6 +816,9 @@
                     <option value="أكثر من خدمة">أكثر من خدمة</option>
                 </select>
                 <textarea class="form-textarea" rows="4" placeholder="أخبرني عن وضعك المهني الحالي والتحديات التي تواجهك" name="message"></textarea>
+                <input type="hidden" name="_next" value="https://careeradvicewithghada.github.io/career-advice-website">
+                <input type="hidden" name="_subject" value="طلب استشارة مهنية جديد">
+                <input type="hidden" name="_cc" value="Careeradvicewithghada@gmail.com">
                 <button type="submit" class="submit-btn">احجز جلستك المجانية الآن</button>
             </form>
             
@@ -929,35 +932,25 @@
             icon.classList.toggle('rotate');
         }
 
-        // Contact form handling with email
+        // Contact form handling with Formspree
         document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            const submitBtn = this.querySelector('.submit-btn');
             
-            // جمع بيانات النموذج
-            const name = this.querySelector('input[name="name"]').value;
-            const email = this.querySelector('input[name="email"]').value;
-            const phone = this.querySelector('input[name="phone"]').value;
-            const service = this.querySelector('select[name="service"]').value;
-            const message = this.querySelector('textarea[name="message"]').value;
+            // تغيير نص الزر أثناء الإرسال
+            submitBtn.innerHTML = 'جاري الإرسال...';
+            submitBtn.disabled = true;
             
-            // إنشاء رابط إيميل
-            const emailSubject = encodeURIComponent('طلب استشارة مهنية - ' + name);
-            const emailBody = encodeURIComponent(`
-الاسم: ${name}
-البريد الإلكتروني: ${email}
-رقم الهاتف: ${phone}
-الخدمة المطلوبة: ${service}
-تفاصيل الطلب: ${message}
-
---
-تم إرسال هذا الطلب من موقع غادة للاستشارات المهنية
-            `);
-            
-            // فتح تطبيق الإيميل
-            window.open(mailto:Careeradvicewithghada@gmail.com?subject=${emailSubject}&body=${emailBody});
-            
-            alert('تم إعداد الإيميل! يرجى إرساله من تطبيق البريد الإلكتروني الخاص بك.');
-            this.reset();
+            // لا نمنع الإرسال - دع Formspree يتعامل معه
+        });
+        
+        // التعامل مع الاستجابة بعد الإرسال
+        window.addEventListener('load', function() {
+            // إذا كان هناك رسالة نجاح في URL
+            if (window.location.search.includes('success=true')) {
+                alert('تم إرسال طلبك بنجاح! سيتم التواصل معك خلال 24 ساعة.');
+                // مسح الـ URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         });
 
         // Header scroll effect
