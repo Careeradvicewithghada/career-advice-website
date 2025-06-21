@@ -802,7 +802,7 @@
             <h2 class="section-title" style="color: white;">احجز جلستك المجانية الآن</h2>
             <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">ابدأ أول خطوة نحو مستقبلك المهني مع جلسة تقييم مجانية</p>
             
-            <form class="contact-form" action="https://formspree.io/f/xanyqgdj" method="POST" id="contactForm">
+            <form class="contact-form" id="contactForm">
                 <div class="form-grid">
                     <input type="text" class="form-input" placeholder="الاسم الكامل" required name="name">
                     <input type="email" class="form-input" placeholder="البريد الإلكتروني" required name="email">
@@ -816,9 +816,7 @@
                     <option value="أكثر من خدمة">أكثر من خدمة</option>
                 </select>
                 <textarea class="form-textarea" rows="4" placeholder="أخبرني عن وضعك المهني الحالي والتحديات التي تواجهك" name="message"></textarea>
-                <input type="hidden" name="_next" value="https://careeradvicewithghada.github.io/career-advice-website">
-                <input type="hidden" name="_subject" value="طلب استشارة مهنية جديد">
-                <input type="hidden" name="_cc" value="Careeradvicewithghada@gmail.com">
+
                 <button type="submit" class="submit-btn">احجز جلستك المجانية الآن</button>
             </form>
             
@@ -932,25 +930,56 @@
             icon.classList.toggle('rotate');
         }
 
-        // Contact form handling with Formspree
+        // Contact form handling - Enhanced email system
         document.getElementById('contactForm').addEventListener('submit', function(e) {
-            const submitBtn = this.querySelector('.submit-btn');
+            e.preventDefault();
             
-            // تغيير نص الزر أثناء الإرسال
-            submitBtn.innerHTML = 'جاري الإرسال...';
-            submitBtn.disabled = true;
+            // جمع بيانات النموذج
+            const name = this.querySelector('input[name="name"]').value;
+            const email = this.querySelector('input[name="email"]').value;
+            const phone = this.querySelector('input[name="phone"]').value;
+            const service = this.querySelector('select[name="service"]').value;
+            const message = this.querySelector('textarea[name="message"]').value;
             
-            // لا نمنع الإرسال - دع Formspree يتعامل معه
-        });
-        
-        // التعامل مع الاستجابة بعد الإرسال
-        window.addEventListener('load', function() {
-            // إذا كان هناك رسالة نجاح في URL
-            if (window.location.search.includes('success=true')) {
-                alert('تم إرسال طلبك بنجاح! سيتم التواصل معك خلال 24 ساعة.');
-                // مسح الـ URL
-                window.history.replaceState({}, document.title, window.location.pathname);
+            // التحقق من البيانات
+            if (!name || !email || !phone || !service) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
             }
+            
+            // إنشاء محتوى الإيميل
+            const emailSubject = encodeURIComponent(طلب استشارة مهنية - ${name});
+            const emailBody = encodeURIComponent(`
+🌟 طلب استشارة مهنية جديد
+═══════════════════════════════
+
+👤 الاسم: ${name}
+📧 البريد الإلكتروني: ${email}
+📱 رقم الهاتف: ${phone}
+🎯 الخدمة المطلوبة: ${service}
+
+💬 تفاصيل الطلب:
+${message}
+
+═══════════════════════════════
+📅 تاريخ الطلب: ${new Date().toLocaleDateString('ar-SA')}
+🕐 وقت الطلب: ${new Date().toLocaleTimeString('ar-SA')}
+🌐 المصدر: موقع غادة للاستشارات المهنية
+
+---
+Career Advice with Ghada
+https://careeradvicewithghada.github.io/career-advice-website
+            `);
+            
+            // فتح تطبيق البريد
+            const mailtoLink = mailto:Careeradvicewithghada@gmail.com?subject=${emailSubject}&body=${emailBody};
+            window.open(mailtoLink);
+            
+            // إظهار رسالة للعميل
+            alert('تم إعداد الإيميل!\n\nيرجى:\n1. الضغط على "إرسال" في تطبيق البريد\n2. سيتم التواصل معك خلال 24 ساعة');
+            
+            // مسح النموذج
+            this.reset();
         });
 
         // Header scroll effect
